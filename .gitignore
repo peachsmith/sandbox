@@ -1,0 +1,12 @@
+*.exe
+.DS_Store
+.vscode/
+.idea/
+*.obj
+*.o
+*.la
+*.a
+*.so
+*.dylib
+*.out
+
