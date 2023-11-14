@@ -58,6 +58,15 @@ void greet()
     printf("Hello, World!\n");
 }
 
+void print_bits(my_byte b)
+{
+    for (int i = 0; i < CHAR_BIT; i++)
+    {
+        putc((b & (1 << (CHAR_BIT - i - 1))) ? '1' : '0', stdout);
+    }
+    putc('\n', stdout);
+}
+
 int main()
 {
     //------------------------------------------------------------------------
@@ -113,7 +122,7 @@ int main()
     }
 
     // sizeof effectively returns the number of elements of a static array.
-    printf("sizeof static array: %zu\n", sizeof(data));
+    printf("sizeof static array: %zu (number of elements)\n", sizeof(data));
 
     // Since print_array expects a pointer to a my_byte, we pass in the
     // address of the first element of the data array.
@@ -131,7 +140,7 @@ int main()
     // sizeof returns the size of a pointer when given a pointer to dynamic
     // memory. In this case, dy_data is just a pointer like any any other
     // pointer.
-    printf("sizeof dynamic array: %zu\n", sizeof(dy_data));
+    printf("sizeof dynamic array: %zu (size of a pointer)\n", sizeof(dy_data));
 
     print_array(dy_data, dy_size);
 
@@ -164,6 +173,45 @@ int main()
 
     obj.hello();
     printf("callback result from within a struct: %d\n", obj.callback(2, 3));
+
+    //------------------------------------------------------------------------
+    // bitwise operations
+
+    // Bitwise notation:
+    // Bits start at bit 0, like array indices.
+    // A range of bits is often represents in the form [<high>:<low>]
+    // for example, the first 8 bits of a number would be [7:0].
+    //
+    // The number 129 represented as a bit string:
+    // value: 1  0  0  0  0  0  0  1
+    // bit:   7  6  5  4  3  2  1  0
+
+    // single bit set to 1
+    my_byte bit_demo = 0x00;
+
+    // set bit 0
+    bit_demo |= 0x01;
+    print_bits(bit_demo);
+
+    // set bits 3 and 7
+    bit_demo |= (0x08 | 0x80);
+    print_bits(bit_demo);
+
+    // clear bit 3
+    bit_demo &= ~(1 << 3);
+    print_bits(bit_demo);
+
+    // toggle all bits
+    bit_demo = ~bit_demo;
+    print_bits(bit_demo);
+
+    // clear all bits
+    bit_demo ^= bit_demo;
+    print_bits(bit_demo);
+
+    // set all bits
+    bit_demo ^= ~(bit_demo);
+    print_bits(bit_demo);
 
     return 0;
 }
