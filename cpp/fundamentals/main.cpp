@@ -60,6 +60,11 @@ void print_bits(my_byte b)
     putc('\n', stdout);
 }
 
+void multiply_by_reference(int &a, int b)
+{
+    a *= b;
+}
+
 int main()
 {
     //------------------------------------------------------------------------
@@ -109,7 +114,20 @@ int main()
 
     //------------------------------------------------------------------------
     // dynamic arrays
-    // TODO
+    size_t dy_size = EXAMPLE_BUFFER_SIZE;
+    my_byte *dy_data = new my_byte[dy_size];
+    for (int i = 0; i < dy_size; i++)
+    {
+        dy_data[i] = b + (0xF - i);
+    }
+
+    std::cout << "sizeof dynamic array: " << sizeof(dy_data) << " (size of a pointer)" << std::endl;
+
+    // There is currently no C++ version of realloc for plain arrays.
+    // For such functionality, either allocate an array the C way, or use
+    // something like std::vector.
+
+    delete[] dy_data;
 
     //------------------------------------------------------------------------
     // passing functions as arguments
@@ -164,6 +182,28 @@ int main()
     // set all bits
     bit_demo ^= ~(bit_demo);
     print_bits(bit_demo);
+
+    //------------------------------------------------------------------------
+    // references
+
+    int some_value = 4;
+    int other_value = 5;
+
+    // A reference is basically just a prettier pointer.
+    // It allows modification of the referenced value without the dereference
+    // operator.
+    int &some_reference = some_value;
+
+    // Once a reference has been declared, it cannot be changed to point to a
+    // different value. Attempting to do so will simply assign the referenced
+    // variable to a new value.
+    // So the following statement is basically the same as
+    // some_value = other_value
+    some_reference = other_value;
+
+    std::cout << "some_reference " << some_reference << std::endl;
+    multiply_by_reference(some_reference, 2);
+    std::cout << "some_reference " << some_reference << std::endl;
 
     return 0;
 }

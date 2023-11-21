@@ -19,11 +19,13 @@ void load_env_var(const char *name, char *buffer)
     // getenv_s is only guaranteed to be available if __STDC_LIB_EXT1__ is
     // defined by the implementation and __STDC_WANT_LIB_EXT1__ is set to 1
     // before including stdlib.h.
-    // However, on current versions of MSVC, the __STDC_WANT_SECURE_LIB__
-    // may be defined, in which case that compiler expects getenv_s to be used
-    // instead of getenv.
+    // However, on current versions of MSVC, the _s version of most IO
+    // functions is available, in which case a deprecation warning will be
+    // present when using the older versions of those functions.
+    // Defining _CRT_SECURE_NO_WARNINGS will disable this warning, but
+    // ideally, it's safest to use the _s version for their bounds checking.
 #if (defined(__STDC_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ == 1) || \
-    (defined(_WIN32) && defined(__STDC_WANT_SECURE_LIB__))
+    (defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS))
     size_t res_count;
     if (getenv_s(&res_count, buffer, ENV_BUFF_SIZE, name))
     {
