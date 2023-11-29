@@ -3,26 +3,53 @@
 
 #define BAGEL_NAME_SIZE 32
 
+enum Flavor
+{
+    PLAIN = 0,
+    BLUEBERRY,
+    CINNAMON,
+    BAGEL_FLAVOR_MAX
+};
+
+class Data
+{
+public:
+    int num;
+
+    Data()
+    {
+    }
+
+    Data(int num)
+    {
+        this->num = num;
+    }
+};
+
 // a plain old regular class
 class Bagel
 {
-public:
-    enum Flavor
-    {
-        PLAIN = 0,
-        BLUEBERRY,
-        CINNAMON,
-        BAGEL_FLAVOR_MAX
-    };
+private:
+    static const char *BagelNames[4];
 
+    // A common convention is to use the m_ prefix for member variables.
+    int m_ID;
+
+    // This creates an instance of the Data class.
+    // If this instance is not created in a member initializer list, it will
+    // be instantiated with the default constructor.
+    Data m_Data;
+
+public:
     char Name[BAGEL_NAME_SIZE];
     int Price;
 
     // default constructor
     // This will be present event if we don't define it.
-    Bagel()
+    // When using a member initializer list, the members should be initialized
+    // in the order they were declared.
+    Bagel() : m_ID(0), m_Data(0xBEEF) // member initializer list
     {
-        m_ID = 0;
         Name[0] = '\0';
     }
 
@@ -38,7 +65,7 @@ public:
     {
     }
 
-    Bagel(int id, int price, Bagel::Flavor name)
+    Bagel(int id, int price, enum Flavor name)
     {
         m_ID = id;
         Price = price;
@@ -56,12 +83,6 @@ public:
     {
         std::cout << "ID: " << m_ID << ", name: " << Name << ", price: " << Price << std::endl;
     }
-
-private:
-    static const char *BagelNames[4];
-
-    // A common convention is to use the m_ prefix for member variables.
-    int m_ID;
 };
 
 const char *Bagel::BagelNames[4] = {"plain",
@@ -108,12 +129,14 @@ public:
 
     // The override keyword is optional here, but it's usefule
     // for reminding ourselves that a function has been overridden.
-    void Floop() override
+    // The use of the override keyword is considered a C++11 extension
+    // and may require additional compiler options on certain platforms.
+    void Floop() // override
     {
         std::cout << "floop, but from an amberjack" << std::endl;
     }
 
-    void Sploop() override
+    void Sploop() // override
     {
         std::cout << "The amberjack gladly implemented the Sploop method." << std::endl;
     }
@@ -132,7 +155,7 @@ public:
         std::cout << "[ID: " << m_ID << "] A gar is stored in a garage." << std::endl;
     }
 
-    void Sploop() override
+    void Sploop() // override
     {
         std::cout << "The gar begrudgingly implemented the Sploop method." << std::endl;
     }
@@ -151,9 +174,9 @@ int main()
     // class basics
 
     Bagel noBagel;
-    Bagel plainBagel(1, 100, Bagel::Flavor::PLAIN);
-    Bagel blueberryBagel(2, 314, Bagel::Flavor::BLUEBERRY);
-    Bagel cinnamonBagel(3, 250, Bagel::Flavor::CINNAMON);
+    Bagel plainBagel(1, 100, PLAIN);
+    Bagel blueberryBagel(2, 314, BLUEBERRY);
+    Bagel cinnamonBagel(3, 250, CINNAMON);
 
     noBagel.Describe();
     plainBagel.Describe();

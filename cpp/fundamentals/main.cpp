@@ -65,6 +65,24 @@ void multiply_by_reference(int &a, int b)
     a *= b;
 }
 
+// A naive implementation of array resizing.
+// This macro creates a new array, copies the contents of the old array into
+// the new array, then deletes the old array.
+//
+// Params:
+//   t - the type of each element
+//   src - the original array
+//   s0 - the size of the original array
+//   s1 - the size of the new array
+#define naive_realloc(t, src, s0, s1)                 \
+    {                                                 \
+        t *dest = new t[(s1)];                        \
+        for (size_t i = 0; i < (s0) && i < (s1); i++) \
+            dest[i] = src[i];                         \
+        delete[] src;                                 \
+        src = dest;                                   \
+    }
+
 int main()
 {
     //------------------------------------------------------------------------
@@ -116,17 +134,30 @@ int main()
     // dynamic arrays
     size_t dy_size = EXAMPLE_BUFFER_SIZE;
     my_byte *dy_data = new my_byte[dy_size];
-    for (int i = 0; i < dy_size; i++)
+    for (size_t i = 0; i < dy_size; i++)
     {
         dy_data[i] = b + (0xF - i);
     }
 
     std::cout << "sizeof dynamic array: " << sizeof(dy_data) << " (size of a pointer)" << std::endl;
 
+    print_array(dy_data, dy_size);
+
     // There is currently no C++ version of realloc for plain arrays.
     // For such functionality, either allocate an array the C way, or use
     // something like std::vector.
 
+    dy_size += 8;
+    naive_realloc(my_byte, dy_data, dy_size, dy_size - 8);
+    for (size_t i = dy_size - 8; i < dy_size; i++)
+    {
+        dy_data[i] = b + (my_byte)i;
+    }
+    print_array(dy_data, dy_size);
+
+    // Free any memory allocated with new.
+    // If an array was allocated with new, then the delete keyword should have
+    // the [] suffix.
     delete[] dy_data;
 
     //------------------------------------------------------------------------
