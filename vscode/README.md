@@ -138,3 +138,5 @@ launch.json:
     "version": "2.0.0"
 }
 ```
+
+For launch.json on Mac, remove the `miDebuggerPath` and change the `MIMode` to `"lldb"`.
